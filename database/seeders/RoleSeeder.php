@@ -16,10 +16,10 @@ class RoleSeeder extends Seeder
         $roles = [
             "Admin" => "Puede crear, editar y eliminar cualquier tarea del proyecto y gestinar permisos y roles.",
             "Empleado" => "Puede crear y editar tarjetas de un proyecto.",
-            "Observador" => "Puede visualizar las diferentes tareas pero no puede gestionar nada."
+            "Supervisor" => "Puede visualizar las diferentes tareas pero no puede gestionar nada."
         ];
         foreach($roles as $name=>$description){
-            Role::create([compact('name', 'description')]);
+            Role::create(compact('name', 'description'));
         }
     }
 }

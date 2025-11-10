@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Tag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Board;
 use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
@@ -14,14 +14,17 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $tags = [
-            "Importante" => "#e74c3c",
-            "En curso" => "#3498db",
-            "Pendiente" => "#ff7e00",
-            "Revisión" => "#f1c40f",
-            "Completado" => "#2ecc71"
+            "Crítico"   => "#e74c3c",
+            "FrontEnd"  => "#3498db",
+            "BackEnd"   => "#ff7e00",
         ];
-        foreach($tags as $name=>$color){
-            Tag::create([compact('name', 'color')]);
+
+        foreach ($tags as $name => $color) {
+            Tag::create([
+                'name'      => $name,
+                'color'     => $color,
+                'board_id'  => Board::inRandomOrder()->first()->id,
+            ]);
         }
     }
 }

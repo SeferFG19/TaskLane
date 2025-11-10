@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tlists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('color');
             $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
             $table->timestamps();
         });
