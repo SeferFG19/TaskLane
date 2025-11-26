@@ -1,0 +1,160 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap");
+
+body {
+    font-family: "Roboto Mono", monospace;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background: linear-gradient(150deg, #cb6ce6, #1cc88a);
+    color: white;
+    padding-bottom: 100px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.nav-buttons {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-login {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.btn-nav {
+    color: #ffffff;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-login {
+    color: #ffffff;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-nav:hover {
+    background-color: #6b498d;
+}
+
+.btn-login:hover {
+    background-color: #6b498d;
+}
+
+.hero {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px 100px;
+}
+
+.hero-text {
+    max-width: 50%;
+}
+
+.hero-text h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.hero-text p {
+    font-size: 1.3em;
+    line-height: 1.6;
+}
+
+.hero-image-frame {
+    display: inline-block;
+    padding: 12px;
+    border-radius: 16px;
+    background:#f5fe8c;
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+    width: fit-content;
+}
+
+.hero-image {
+    display: block;
+    width: 80%;
+    max-width: 500%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.hero-text .btn {
+    margin-top: 10px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.btn {
+    background-color: #f5fe8c;
+    color: #333;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    
+}
+
+section {
+    padding: 50px 10px;
+    text-align: center;
+}
+
+.sections-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.section {
+    margin-top: 20px;
+    background: #3eebb7;
+    padding: 20px;
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.titles {
+    background: #6b498d;
+    color: white;
+    border-radius: 2px;
+    display: inline-block;
+    padding: 10px 20px;
+}
+
+footer {
+    background-color: #386146;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
