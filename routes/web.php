@@ -14,9 +14,9 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    //Dashboard general
+    //Vista general una vez registrado
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return redirect()->route('projects.index');
     })->name('dashboard');
 
     //CRUD Proyectos
@@ -25,4 +25,3 @@ Route::middleware([
     //CRUD Tareas
     Route::resource('tasks', TaskController::class);
 });
-

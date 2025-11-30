@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import "landing.css";
+@import "projects.css";
 
 [x-cloak] {
     display: none;
