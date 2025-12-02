@@ -18,10 +18,4 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return redirect()->route('projects.index');
     })->name('dashboard');
-
-    //CRUD Proyectos
-    Route::resource('projects', ProjectController::class);
-
-    //CRUD Tareas
-    Route::resource('tasks', TaskController::class);
 });
