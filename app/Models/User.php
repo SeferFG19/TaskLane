@@ -76,7 +76,8 @@ class User extends Authenticatable
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'project_user');
+        return $this->belongsToMany(Project::class, 'project_users')
+                    ->withPivot('role_id');
     }
 
     public function comments(): HasMany

@@ -31,16 +31,19 @@ class ProjectsDashboard extends Component
         $user = Auth::user();
 
         $query = Project::query()
-            ->whereHas('users', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
+            ->where(function ($q) use ($user) {
+                $q->whereHas('users', function ($q2) use ($user) {
+                    $q2->where('user_id', $user->id);
+                })
+                    ->orWhere('created_by', $user->id);
             })
             ->where(function ($q) {
                 $q->where('name', 'like', "%{$this->texto}%")
-                  ->orWhere('description', 'like', "%{$this->texto}%");
+                    ->orWhere('description', 'like', "%{$this->texto}%");
             })
             ->orderBy($this->campo, $this->orden);
 
-        $proyectos = $query->paginate(8);
+        $projects = $query->with('boards')->paginate(8);
 
         return view('livewire.projects-dashboard', compact('projects'));
     }
@@ -56,9 +59,7 @@ class ProjectsDashboard extends Component
         $this->resetPage();
     }
 
-    // ---------- CREAR ----------
-
-    public function openClose(): void
+    public function openCreate(): void
     {
         $this->autorizarAdminGlobal();
         $this->openCreate = true;
@@ -83,11 +84,9 @@ class ProjectsDashboard extends Component
         $this->dispatch('mensaje', 'Proyecto creado correctamente');
     }
 
-    // ---------- EDITAR ---------- 
-
     public function editar(Project $project): void
     {
-        $this->autorizarAdminProyecto($project);
+        $this->autorizarAdminProject($project);
 
         $this->editandoProject = $project;
         $this->form->modoEditar($project);
@@ -106,8 +105,6 @@ class ProjectsDashboard extends Component
         $this->dispatch('evtProyectoActualizado');
         $this->dispatch('mensaje', 'Proyecto actualizado correctamente');
     }
-
-    // ---------- BORRAR ----------
 
     public function confirmarBorrar(Project $project): void
     {

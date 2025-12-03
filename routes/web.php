@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\TaskController;
+use App\Livewire\Dashboard;
+use App\Livewire\ProjectsDashboard;
 use Illuminate\Support\Facades\Route;
 
 //Landing Page
@@ -15,7 +15,10 @@ Route::middleware([
 ])->group(function () {
 
     //Vista general una vez registrado
-    Route::get('/dashboard', function () {
-        return redirect()->route('projects.index');
-    })->name('dashboard');
+    Route::get('/dashboard', ProjectsDashboard::class)
+        ->name('dashboard');
+
+    // Vista al pinchar en un proyecto
+    Route::get('/boards/{board}', Dashboard::class)
+        ->name('boards.show');
 });

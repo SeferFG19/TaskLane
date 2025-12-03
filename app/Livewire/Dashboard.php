@@ -51,8 +51,8 @@ class Dashboard extends Component
 
         // empleados a los que se les puede asignar tarjetas
         $empleados = User::whereHas('projects', function ($q) {
-                $q->where('project_id', $this->project->id);
-            })
+            $q->where('project_id', $this->project->id);
+        })
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'Empleado');
             })
@@ -69,15 +69,15 @@ class Dashboard extends Component
     {
         $this->asegurarAdminProject();
         $this->openCreateTask = true;
-        $this->listForm->modoCrear($this->board);
+        $this->formTask->modoCrear($this->board);
     }
 
     public function storeTask(): void
     {
         $this->asegurarAdminProject();
 
-        $this->listForm->formStore();
-        $this->listForm->formCancelar();
+        $this->formTask->formStore();
+        $this->formTask->formCancelar();
         $this->openCreateTask = false;
 
         $this->board->refresh();
@@ -93,20 +93,30 @@ class Dashboard extends Component
         $this->dispatch('mensaje', 'Tarea eliminada');
     }
 
+    public function cancelTask(): void
+    {
+        $this->openCreateCard = false;
+        $this->openUpdateCard = false;
+
+        $this->formCard->formCancelar();
+        $this->editandoCard = null;
+    }
+
+
     public function openCreateCard(Tlist $tlist): void
     {
         $this->asegurarAdminProject();
         $this->openCreateCard = true;
-        $this->cardForm->modoCrear($tlist);
+        $this->formCard->modoCrear($tlist);
     }
 
     public function storeCard(): void
     {
         $this->asegurarAdminProject();
-        $this->cardForm->formStore();
+        $this->formCard->formStore();
 
         $this->openCreateCard = false;
-        $this->cardForm->formCancelar();
+        $this->formCard->formCancelar();
         $this->board->refresh();
 
         $this->dispatch('mensaje', 'Tarea creada');
@@ -114,9 +124,9 @@ class Dashboard extends Component
 
     public function editCard(Card $card): void
     {
-        $this->j();
+        $this->asegurarAdminProject();
         $this->editandoCard = $card;
-        $this->cardForm->modoEditar($card);
+        $this->formCard->modoEditar($card);
 
         $this->openUpdateCard = true;
     }
@@ -124,23 +134,23 @@ class Dashboard extends Component
     public function updateCard(): void
     {
         $this->asegurarAdminProject();
-        $this->cardForm->formUpdate();
+        $this->formCard->formUpdate();
 
         $this->openUpdateCard = false;
-        $this->cardForm->formCancelar();
+        $this->formCard->formCancelar();
         $this->editandoCard = null;
         $this->board->refresh();
 
         $this->dispatch('mensaje', 'Tarea actualizada');
     }
 
-    public function confirmarBorrarCard(Card $card): void
+    public function confirmarDeleteCard(Card $card): void
     {
         $this->asegurarAdminProject();
-        $this->dispatch('evtConfirmarBorrarCard', $card->id);
+        $this->dispatch('evtConfirmarDeleteCard', $card->id);
     }
 
-    #[On('evtBorrarCardOk')]
+    #[On('evtDeleteCardOk')]
     public function deleteCard(Card $card): void
     {
         $this->asegurarAdminProject();
@@ -236,7 +246,7 @@ class Dashboard extends Component
     }
 
     // si no es admin del proyecto, salta error 403
-    protected function asegurarAdminProject():void
+    protected function asegurarAdminProject(): void
     {
         $role = $this->roleUserInProject($this->project);
         abort_unless($role === 'Admin', 403);

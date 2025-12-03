@@ -24,9 +24,10 @@ class Project extends Model
         return $this->hasMany(Board::class);
     }
 
-    public function projectUsers(): BelongsToMany
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'project_user');
+        return $this->belongsToMany(User::class, 'project_users')
+                    ->withPivot('role_id');
     }
 }
 
