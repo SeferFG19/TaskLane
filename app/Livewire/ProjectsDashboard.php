@@ -43,9 +43,12 @@ class ProjectsDashboard extends Component
             })
             ->orderBy($this->campo, $this->orden);
 
-        $projects = $query->with('boards')->paginate(8);
+        // lo cargo de esta manera para que solo vean los botones de crear, editar y borrar si son Admin global o Admin del proyecto
+        $projects = $query->with('users', 'boards')->paginate(8);
 
-        return view('livewire.projects-dashboard', compact('projects'));
+        $adminRoleId = Role::where('name', 'Admin')->value('id');
+
+        return view('livewire.projects-dashboard', ['projects' => $projects, 'currentUser' => $user, 'adminRoleId' => $adminRoleId]);
     }
 
     public function ordenar(string $campo): void
@@ -77,6 +80,19 @@ class ProjectsDashboard extends Component
         if ($adminRole) {
             $project->users()->attach(Auth::id(), ['role_id' => $adminRole->id]);
         }
+
+        $board = $project->boards()->create([
+            'name' => 'Tablero principal',
+            'created_by' => Auth::id(),
+        ]);
+
+        $board->tlists()->createMany([
+            ['name' => 'Importante',  'color' => '#e74c3c'],
+            ['name' => 'En curso',    'color' => '#3498db'],
+            ['name' => 'Pendiente',   'color' => '#ff7e00'],
+            ['name' => 'Revisión',    'color' => '#f1c40f'],
+            ['name' => 'Completado',  'color' => '#2ecc71'],
+        ]);
 
         $this->cancelar();
 
@@ -139,7 +155,7 @@ class ProjectsDashboard extends Component
         abort_unless($user && $user->is_admin, 403);
     }
 
-    // verifica si es admin del proyecto y si no, salta el error 404
+    // verifica si el proyecto existe y si no, salta el error 404
     protected function autorizarAdminProject(?Project $project): void
     {
         abort_if(!$project, 404);
@@ -149,7 +165,7 @@ class ProjectsDashboard extends Component
             return;
         }
 
-        // Buscar rol del usuario en este proyecto
+        // Busca al usuario en este proyecto y si no está salta 403
         $pivot = $project->users()
             ->where('user_id', $user->id)
             ->first();

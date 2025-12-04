@@ -14,7 +14,7 @@ class FormProject extends Form
     #[Validate(['required', 'string', 'min:3', 'max:150'])]
     public string $name = '';
 
-    #[Validate(['required', 'string', 'min:10', 'max:500'])]
+    #[Validate(['required', 'string', 'min:5', 'max:500'])]
     public string $description = '';
 
     public function modoCrear(): void
@@ -38,7 +38,7 @@ class FormProject extends Form
 
         return [
             'name' => ['required', 'string', 'min:3', 'max:150', "unique:projects,name,{$id}"],
-            'description' => ['required', 'string', 'min:10', 'max:500'],
+            'description' => ['required', 'string', 'min:5', 'max:500'],
         ];
     }
 

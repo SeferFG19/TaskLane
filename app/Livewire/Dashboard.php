@@ -49,13 +49,13 @@ class Dashboard extends Component
 
         $role = $this->roleUserInProject($this->project);
 
-        // empleados a los que se les puede asignar tarjetas
-        $empleados = User::whereHas('projects', function ($q) {
-            $q->where('project_id', $this->project->id);
+        $empleadoRoleId = Role::where('name', 'Empleado')->value('id');
+
+        // empleados a los que se les puede asignar tareas
+        $empleados = User::whereHas('projects', function ($q) use ($empleadoRoleId) {
+            $q->where('project_id', $this->project->id)
+                ->wherePivot('role_id', $empleadoRoleId);
         })
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'Empleado');
-            })
             ->get();
 
         return view('livewire.dashboard', [
@@ -103,9 +103,10 @@ class Dashboard extends Component
     }
 
 
-    public function openCreateCard(Tlist $tlist): void
+    public function openCreateCard(Tlist $tlistId): void
     {
         $this->asegurarAdminProject();
+        $tlist = Tlist::findOrFail($tlistId);
         $this->openCreateCard = true;
         $this->formCard->modoCrear($tlist);
     }
@@ -165,7 +166,7 @@ class Dashboard extends Component
     {
         $role = $this->roleUserInProject($this->project);
 
-        // Admin
+        // admin
         if ($role === 'Admin') {
             $card->update(['list_id' => $destino->id]);
             $this->board->refresh();
@@ -231,6 +232,11 @@ class Dashboard extends Component
         $user = Auth::user();
 
         if ($user?->is_admin) {
+            return 'Admin';
+        }
+
+        // para que trate al creador del proyecto como admin
+        if ($project->created_by === $user->id) {
             return 'Admin';
         }
 

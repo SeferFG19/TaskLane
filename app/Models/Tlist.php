@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tlist extends Model
 {
-    protected $fillable = ['name', 'board_id'];
+    protected $fillable = ['name', 'board_id', 'color'];
 
     public function board(): BelongsTo
     {

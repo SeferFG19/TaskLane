@@ -4,9 +4,11 @@
         <h1>Mis proyectos</h1>
         <div class="header-actions">
             <input type="text" class="search" placeholder="Buscar..." wire:model.live="texto">
-            <button class="btn btn-one" wire:click="openCreate">
+            @if ($currentUser->is_admin)
+            <button class="btn btn-one" wire:click="$set('openCreate', true)">
                 Crear proyecto
             </button>
+            @endif
         </div>
     </div>
 
@@ -14,7 +16,6 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="sortable" wire:click="ordenar('id')">ID</th>
                     <th class="sortable" wire:click="ordenar('name')">Nombre</th>
                     <th>Descripción</th>
                     <th>Acciones</th>
@@ -24,13 +25,17 @@
             <tbody>
                 @forelse($projects as $p)
                 <tr>
-                    <td>{{ $p->id }}</td>
                     <td>{{ $p->name }}</td>
                     <td>{{ $p->description }}</td>
                     <td class="actions">
 
                         @php
-                            $board = $p->boards->first();
+                        $pivotUser = $p->users->firstWhere('id', $currentUser->id);
+                        $isProjectAdmin = $currentUser->is_admin || $p->created_by === $currentUser->id || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
+                        @endphp
+
+                        @php
+                        $board = $p->boards->first();
                         @endphp
 
                         @if ($board)
@@ -39,6 +44,7 @@
                         </a>
                         @endif
 
+                        @if ($isProjectAdmin)
                         <button class="btn btn-one btn-sm"
                             wire:click="editar({{ $p->id }})">
                             Editar
@@ -48,6 +54,7 @@
                             wire:click="confirmarBorrar({{ $p->id }})">
                             Borrar
                         </button>
+                        @endif
 
                     </td>
                 </tr>
@@ -75,11 +82,21 @@
 
             <label>Nombre</label>
             <input type="text" wire:model="form.name">
+            @error('form.name')
+            <div style="color: red; font-size: 0.8rem; margin-top: 4px;">
+                {{ $message }}
+            </div>
+            @enderror
 
             <br><br>
 
             <label>Descripción</label>
             <textarea wire:model="form.description"></textarea>
+            @error('form.description')
+                <div style="color: red; font-size: 0.8rem; margin-top: 4px;">
+                    {{ $message }}
+                </div>
+            @enderror
 
             <br><br>
 

@@ -9,64 +9,67 @@ use Livewire\Form;
 
 class FormCard extends Form
 {
-    public ?Tlist $tlist = null;
     public ?Card $card = null;
+    public ?Tlist $tlist = null;
 
     #[Validate(['required', 'string', 'min:3', 'max:150'])]
     public string $title = '';
 
-    #[Validate(['nullable', 'string', 'max:1000'])]
+    #[Validate(['required', 'string', 'min:5', 'max:1000'])]
     public string $description = '';
 
-    #[Validate(['nullable', 'integer', 'exists:users,id'])]
-    public $assigned_to = null;
-
-    public function modoCrear(Tlist $list): void
+    public function rules(): array
     {
-        $this->tlist = $list;
-        $this->card = null;
-        $this->title = '';
-        $this->description = '';
-        $this->assigned_to = null;
+        return [
+            'title'       => ['required', 'string', 'min:3', 'max:150'],
+            'description' => ['required', 'string', 'min:5', 'max:1000'],
+        ];
+    }
+
+    public function modoCrear(Tlist $tlist): void
+    {
+        $this->card  = null;
+        $this->tlist = $tlist;
+
+        $this->reset(['title', 'description']);
         $this->resetValidation();
     }
 
     public function modoEditar(Card $card): void
     {
-        $this->card = $card;
-        $this->tlist = $card->list;
-        $this->title = $card->title;
-        $this->description = $card->description ?? '';
-        $this->assigned_to = $card->assigned_to;
-        $this->resetValidation();
-    }
+        $this->card  = $card;
+        $this->tlist = $card->tlist ?? null;
 
-    public function rules(): array
-    {
-        return [
-            'title' => ['required', 'string', 'min:3', 'max:150'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
-        ];
+        $this->title       = $card->title;
+        $this->description = $card->description ?? '';
+
+        $this->resetValidation();
     }
 
     public function formStore(): Card
     {
-        $data = $this->validate();
-        $data['list_id'] = $this->tlist->id;
+        $datos = $this->validate();
 
-        return Card::create($data);
+        $datos['tlist_id'] = $this->tlist?->id;
+
+        return Card::create($datos);
     }
 
     public function formUpdate(): void
     {
-        $data = $this->validate();
-        $this->card->update($data);
+        $datos = $this->validate();
+
+        if ($this->card) {
+            $this->card->update($datos);
+        }
     }
 
     public function formCancelar(): void
     {
-        $this->reset();
+        $this->card  = null;
+        $this->tlist = null;
+
+        $this->reset(['title', 'description']);
         $this->resetValidation();
     }
 }
