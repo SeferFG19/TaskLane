@@ -72,7 +72,7 @@
                 });
             });
 
-            Livewire.on('evtConfirmarBorrarCard', (cardId) => {
+            Livewire.on('evtConfirmarDeleteCard', (cardId) => {
                 Swal.fire({
                     title: '¿Borrar tarea?',
                     icon: 'warning',
@@ -81,9 +81,7 @@
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Livewire.dispatch('evtBorrarCardOk', {
-                            card: cardId
-                        });
+                        Livewire.dispatch('evtDeleteCardOk', cardId);
                     }
                 });
             });

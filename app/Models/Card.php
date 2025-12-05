@@ -12,11 +12,16 @@ class Card extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'tlist_id'];
+    protected $fillable = ['title', 'description', 'tlist_id', 'assigned_to'];
 
-    public function tlists(): BelongsTo
+    public function tlist(): BelongsTo
     {
         return $this->belongsTo(Tlist::class);
+    }
+
+    public function assignedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function comments(): HasMany
@@ -26,6 +31,6 @@ class Card extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'card_tag');
+        return $this->belongsToMany(Tag::class, 'tags_card', 'card_id', 'tag_id');
     }
 }

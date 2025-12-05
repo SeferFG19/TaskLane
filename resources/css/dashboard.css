@@ -1,0 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap");
+
+.dashboard {
+    padding: 16px;
+    box-sizing: border-box;
+    font-family: "Roboto Mono", monospace;
+}
+
+.dashboard h1 {
+    padding: 20px;
+    margin: 0 0 12px 0;
+    font-size: 1.5rem;
+}
+
+.board-container {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 12px;
+}
+
+.board-list {
+    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 8px;
+    min-width: 260px;
+    max-width: 320px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.board-list h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #e5e7eb;
+    box-sizing: border-box;
+}
+
+.card strong {
+    display: block;
+}
+
+.card small {
+    color: #6b7280;
+    display: block;
+    margin-top: 4px;
+}
+
+.card .card-actions {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.btn-one {
+    background-color: #2563eb;
+    color: #fff;
+}
+.btn-two {
+    background-color: #6b7280;
+    color: #fff;
+}
+.btn-three {
+    background-color: #dc2626;
+    color: #fff;
+}
+.btn-sm {
+    padding: 4px 8px;
+}
+
+.modal-background {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.modal label {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.modal input[type="text"],
+.modal textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+}
+
+.modal textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.comments-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+.comment-item {
+    margin-bottom: 10px;
+}
+
+.tags-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.tag-pill input[type="checkbox"] {
+    margin: 0;
+}
+
+.tag-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+}
+
+.tag-name {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .dashboard h1 {
+        font-size: 1.25rem;
+    }
+
+    .board-container {
+        gap: 12px;
+    }
+
+    .board-list {
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        padding: 10px;
+    }
+
+    .board-list {
+        min-width: 200px;
+        padding: 10px;
+    }
+
+    .card .card-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

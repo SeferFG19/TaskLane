@@ -22,8 +22,8 @@ class Dashboard extends Component
     public FormCard $formCard;
     public FormTask $formTask;
 
-    public bool $openCreateCard = false;
-    public bool $openUpdateCard = false;
+    public bool $showOpenCreateCard = false;
+    public bool $showOpenUpdateCard = false;
     public bool $openCreateTask = false;
 
     public ?Card $editandoCard = null;
@@ -52,10 +52,9 @@ class Dashboard extends Component
         $empleadoRoleId = Role::where('name', 'Empleado')->value('id');
 
         // empleados a los que se les puede asignar tareas
-        $empleados = User::whereHas('projects', function ($q) use ($empleadoRoleId) {
-            $q->where('project_id', $this->project->id)
-                ->wherePivot('role_id', $empleadoRoleId);
-        })
+        $empleados = $this->project
+            ->users()
+            ->wherePivot('role_id', $empleadoRoleId)
             ->get();
 
         return view('livewire.dashboard', [
@@ -75,73 +74,64 @@ class Dashboard extends Component
     public function storeTask(): void
     {
         $this->asegurarAdminProject();
-
         $this->formTask->formStore();
         $this->formTask->formCancelar();
         $this->openCreateTask = false;
-
         $this->board->refresh();
-
         $this->dispatch('mensaje', 'Tarea creada correctamente');
     }
 
-    public function deleteTask(Tlist $list): void
+    public function deleteTask(Tlist $tlist): void
     {
         $this->asegurarAdminProject();
-        $list->delete();
+        $tlist->delete();
         $this->board->refresh();
         $this->dispatch('mensaje', 'Tarea eliminada');
     }
 
     public function cancelTask(): void
     {
-        $this->openCreateCard = false;
-        $this->openUpdateCard = false;
-
+        $this->showOpenCreateCard = false;
+        $this->showOpenUpdateCard = false;
         $this->formCard->formCancelar();
         $this->editandoCard = null;
     }
 
 
-    public function openCreateCard(Tlist $tlistId): void
+    public function openCreateCard(int $tlistId): void
     {
         $this->asegurarAdminProject();
-        $tlist = Tlist::findOrFail($tlistId);
-        $this->openCreateCard = true;
-        $this->formCard->modoCrear($tlist);
+        $this->showOpenCreateCard = true;
+        $this->formCard->modoCrear($tlistId);
     }
 
     public function storeCard(): void
     {
         $this->asegurarAdminProject();
         $this->formCard->formStore();
-
-        $this->openCreateCard = false;
+        $this->showOpenCreateCard = false;
         $this->formCard->formCancelar();
         $this->board->refresh();
-
         $this->dispatch('mensaje', 'Tarea creada');
     }
 
-    public function editCard(Card $card): void
+    public function editCard(int $cardId): void
     {
         $this->asegurarAdminProject();
+        $card = Card::with('tags')->findOrFail($cardId);
         $this->editandoCard = $card;
         $this->formCard->modoEditar($card);
-
-        $this->openUpdateCard = true;
+        $this->showOpenUpdateCard = true;
     }
 
     public function updateCard(): void
     {
         $this->asegurarAdminProject();
         $this->formCard->formUpdate();
-
-        $this->openUpdateCard = false;
+        $this->showOpenUpdateCard = false;
         $this->formCard->formCancelar();
         $this->editandoCard = null;
         $this->board->refresh();
-
         $this->dispatch('mensaje', 'Tarea actualizada');
     }
 
@@ -152,12 +142,12 @@ class Dashboard extends Component
     }
 
     #[On('evtDeleteCardOk')]
-    public function deleteCard(Card $card): void
+    public function deleteCard(int $cardId): void
     {
         $this->asegurarAdminProject();
+        $card = Card::findOrFail($cardId);
         $card->delete();
         $this->board->refresh();
-
         $this->dispatch('mensaje', 'Tarea eliminada');
     }
 
@@ -168,14 +158,14 @@ class Dashboard extends Component
 
         // admin
         if ($role === 'Admin') {
-            $card->update(['list_id' => $destino->id]);
+            $card->update(['tlist_id' => $destino->id]);
             $this->board->refresh();
             return;
         }
 
         // Empleado solo puede mover tareas que le pertenezcan
         if ($role === 'Empleado' && $card->assigned_to === Auth::id()) {
-            $card->update(['list_id' => $destino->id]);
+            $card->update(['tlist_id' => $destino->id]);
             $this->board->refresh();
         }
     }
@@ -185,11 +175,8 @@ class Dashboard extends Component
     {
         $this->asegurarAdminProject();
         $empleado = User::where('id', $userId)->firstOrFail();
-
         $card->update(['assigned_to' => $empleado->id]);
-
         $this->board->refresh();
-
         $this->dispatch('mensaje', 'Tarea asignada correctamente');
     }
 
@@ -222,9 +209,17 @@ class Dashboard extends Component
 
         $this->cardComentarios->refresh();
         $this->nuevoComentario = '';
-
         $this->dispatch('mensaje', 'Comentario añadido');
+
+        $this->cerrarComentarios();
     }
+
+    public function cerrarComentarios(): void
+    {
+        $this->cardComentarios = null;
+        $this->nuevoComentario = '';
+    }
+
 
     // devuelve el rol del usuario en el proyecto y si no, desconocido
     protected function roleUserInProject(Project $project): string

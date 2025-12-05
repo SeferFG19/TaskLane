@@ -30,22 +30,26 @@ class ProjectsDashboard extends Component
     {
         $user = Auth::user();
 
-        $query = Project::query()
-            ->where(function ($q) use ($user) {
+        // solo filtra los usuarios si no es admin
+        $query = Project::query();
+
+        if (!$user->is_admin) {
+            $query->where(function ($q) use ($user) {
                 $q->whereHas('users', function ($q2) use ($user) {
                     $q2->where('user_id', $user->id);
                 })
                     ->orWhere('created_by', $user->id);
-            })
-            ->where(function ($q) {
-                $q->where('name', 'like', "%{$this->texto}%")
-                    ->orWhere('description', 'like', "%{$this->texto}%");
-            })
+            });
+        }
+
+        $query->where(function ($q) {
+            $q->where('name', 'like', "%{$this->texto}%")
+                ->orWhere('description', 'like', "%{$this->texto}%");
+        })
             ->orderBy($this->campo, $this->orden);
 
         // lo cargo de esta manera para que solo vean los botones de crear, editar y borrar si son Admin global o Admin del proyecto
-        $projects = $query->with('users', 'boards')->paginate(8);
-
+        $projects = $query->with('users', 'boards')->paginate(12);
         $adminRoleId = Role::where('name', 'Admin')->value('id');
 
         return view('livewire.projects-dashboard', ['projects' => $projects, 'currentUser' => $user, 'adminRoleId' => $adminRoleId]);

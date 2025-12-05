@@ -19,20 +19,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
+            DemoDataSeeder::class,
             
         ]);
-
-        User::factory(5)->create();
-        Project::factory(3)->create();
-        Board::factory(3)->create();
-        
-
-        $this->call([
-            TagSeeder::class,
-            TlistSeeder::class,
-        ]);
-
-        Card::factory(5)->create();
-        ProjectUser::factory(3)->create();
     }
 }
