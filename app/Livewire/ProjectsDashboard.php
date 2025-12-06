@@ -48,11 +48,14 @@ class ProjectsDashboard extends Component
         })
             ->orderBy($this->campo, $this->orden);
 
-        // lo cargo de esta manera para que solo vean los botones de crear, editar y borrar si son Admin global o Admin del proyecto
-        $projects = $query->with('users', 'boards')->paginate(12);
+        $projects = $query->with(['users', 'boards', 'createdBy'])->paginate(12);
         $adminRoleId = Role::where('name', 'Admin')->value('id');
 
-        return view('livewire.projects-dashboard', ['projects' => $projects, 'currentUser' => $user, 'adminRoleId' => $adminRoleId]);
+        return view('livewire.projects-dashboard', [
+            'projects' => $projects,
+            'currentUser' => $user,
+            'adminRoleId' => $adminRoleId,
+        ]);
     }
 
     public function ordenar(string $campo): void
@@ -66,17 +69,19 @@ class ProjectsDashboard extends Component
         $this->resetPage();
     }
 
-    public function openCreate(): void
+    // abre el modal de crear
+    public function abrirCrearProyecto(): void
     {
         $this->autorizarAdminGlobal();
+        $this->openUpdate = false;
         $this->openCreate = true;
+        $this->editandoProject = null;
         $this->form->modoCrear();
     }
 
     public function store(): void
     {
         $this->autorizarAdminGlobal();
-
         $project = $this->form->formStore();
 
         // asignar automáticamente al creador como Admin del proyecto
@@ -91,11 +96,11 @@ class ProjectsDashboard extends Component
         ]);
 
         $board->tlists()->createMany([
-            ['name' => 'Importante',  'color' => '#e74c3c'],
-            ['name' => 'En curso',    'color' => '#3498db'],
-            ['name' => 'Pendiente',   'color' => '#ff7e00'],
-            ['name' => 'Revisión',    'color' => '#f1c40f'],
-            ['name' => 'Completado',  'color' => '#2ecc71'],
+            ['name' => 'Importante', 'color' => '#e74c3c'],
+            ['name' => 'En curso', 'color' => '#3498db'],
+            ['name' => 'Pendiente', 'color' => '#ff7e00'],
+            ['name' => 'Revisión', 'color' => '#f1c40f'],
+            ['name' => 'Completado', 'color' => '#2ecc71'],
         ]);
 
         $this->cancelar();
@@ -107,19 +112,17 @@ class ProjectsDashboard extends Component
     public function editar(Project $project): void
     {
         $this->autorizarAdminProject($project);
-
-        $this->editandoProject = $project;
-        $this->form->modoEditar($project);
-
+        $this->openCreate = false;
         $this->openUpdate = true;
+        $this->editandoProject = $project;
+
+        $this->form->modoEditar($project);
     }
 
     public function update(): void
     {
         $this->autorizarAdminProject($this->editandoProject);
-
         $this->form->formUpdate();
-
         $this->cancelar();
 
         $this->dispatch('evtProyectoActualizado');
@@ -129,7 +132,6 @@ class ProjectsDashboard extends Component
     public function confirmarBorrar(Project $project): void
     {
         $this->autorizarAdminProject($project);
-
         $this->dispatch('evtConfirmarBorrarProyecto', $project->id);
     }
 
@@ -137,7 +139,6 @@ class ProjectsDashboard extends Component
     public function deleteProject(Project $project): void
     {
         $this->autorizarAdminProject($project);
-
         $project->delete();
 
         $this->dispatch('evtProyectoActualizado');
@@ -170,9 +171,7 @@ class ProjectsDashboard extends Component
         }
 
         // Busca al usuario en este proyecto y si no está salta 403
-        $pivot = $project->users()
-            ->where('user_id', $user->id)
-            ->first();
+        $pivot = $project->users()->where('user_id', $user->id)->first();
 
         if (!$pivot) {
             abort(403);

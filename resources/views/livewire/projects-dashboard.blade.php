@@ -1,123 +1,111 @@
-<div class="projects-dashboard">
+<div class="projects-page">
+    <div class="projects-header">
+        <div>
+            <h1 class="projects-title">Mis proyectos</h1>
+            <p class="projects-subtitle">
+                Pulsa en tareas para ir al tablero del proyecto.
+            </p>
+        </div>
 
-    <div class="header">
-        <h1>Mis proyectos</h1>
-        <div class="header-actions">
-            <input type="text" class="search" placeholder="Buscar..." wire:model.live="texto">
+        <div class="projects-header-actions">
+            <input type="text" class="projects-search" placeholder="Buscar proyecto..." wire:model.live="texto">
             @if ($currentUser->is_admin)
-            <button class="btn btn-one" wire:click="$set('openCreate', true)">
-                Crear proyecto
+            <button class="btn btn-one" wire:click="abrirCrearProyecto">
+                + Crear proyecto
             </button>
             @endif
         </div>
     </div>
 
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="sortable" wire:click="ordenar('name')">Nombre</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+    <div class="projects-grid">
+        @forelse($projects as $p)
+        @php
+        $pivotUser = $p->users->firstWhere('id', $currentUser->id);
+        $isProjectAdmin = $currentUser->is_admin
+        || $p->created_by === $currentUser->id
+        || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
+        $board = $p->boards->first();
+        @endphp
 
-            <tbody>
-                @forelse($projects as $p)
-                <tr>
-                    <td>{{ $p->name }}</td>
-                    <td>{{ $p->description }}</td>
-                    <td class="actions">
+        <article class="project-card">
+            <div class="project-card-header">
+                <h2 class="project-card-title">{{ $p->name }}</h2>
+                <span class="project-card-id">#{{ $p->id }}</span>
+            </div>
 
-                        @php
-                        $pivotUser = $p->users->firstWhere('id', $currentUser->id);
-                        $isProjectAdmin = $currentUser->is_admin || $p->created_by === $currentUser->id || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
-                        @endphp
+            <p class="project-card-description">
+                {{ $p->description }}
+            </p>
 
-                        @php
-                        $board = $p->boards->first();
-                        @endphp
+            <div class="project-card-footer">
+                <div class="project-created-by">
+                    <span class="project-created-by-label">Creador:</span>
+                    <span class="project-created-by-value">
+                        {{ optional($p->createdBy)->name ?? 'Desconocido' }}
+                    </span>
+                </div>
+                <div class="project-card-buttons">
+                    @if ($board)
+                    <a href="{{ route('boards.show', $board->id) }}"
+                        class="project-btn project-btn-one">
+                        Tareas
+                    </a>
+                    @endif
 
-                        @if ($board)
-                        <a href="{{ route('boards.show', $board->id) }}" class="btn btn-two btn-sm">
-                            Ver tablero
-                        </a>
-                        @endif
+                    @if($isProjectAdmin)
+                    <button class="project-btn project-btn-two"
+                        wire:click="editar({{ $p->id }})">
+                        Editar
+                    </button>
 
-                        @if ($isProjectAdmin)
-                        <button class="btn btn-one btn-sm"
-                            wire:click="editar({{ $p->id }})">
-                            Editar
-                        </button>
-
-                        <button class="btn btn-three btn-sm"
-                            wire:click="confirmarBorrar({{ $p->id }})">
-                            Borrar
-                        </button>
-                        @endif
-
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty">
-                        No tienes proyectos todavía.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                    <button class="project-btn project-btn-three"
+                        wire:click="confirmarBorrar({{ $p->id }})">
+                        Borrar
+                    </button>
+                    @endif
+                </div>
+            </div>
+        </article>
+        @empty
+        <p class="projects-empty">
+            No tienes proyectos todavía.
+        </p>
+        @endforelse
     </div>
 
-    <div style="margin-top: 20px;">
+    <div class="projects-pagination">
         {{ $projects->links() }}
     </div>
 
     @if($openCreate || $openUpdate)
-    <div class="modal-background">
+    <div class="modal-backdrop">
         <div class="modal">
-            <h2>
-                {{ $openCreate ? 'Crear Proyecto' : 'Editar Proyecto' }}
+            <h2 class="modal-title">
+                {{ $openCreate ? 'Crear proyecto' : 'Editar proyecto' }}
             </h2>
+            <label class="modal-label">Nombre</label>
+            <input type="text" class="modal-input" wire:model="form.name">
 
-            <label>Nombre</label>
-            <input type="text" wire:model="form.name">
-            @error('form.name')
-            <div style="color: red; font-size: 0.8rem; margin-top: 4px;">
-                {{ $message }}
-            </div>
-            @enderror
+            <label class="modal-label">Descripción</label>
+            <textarea class="modal-textarea"
+                wire:model="form.description"></textarea>
 
-            <br><br>
-
-            <label>Descripción</label>
-            <textarea wire:model="form.description"></textarea>
-            @error('form.description')
-                <div style="color: red; font-size: 0.8rem; margin-top: 4px;">
-                    {{ $message }}
-                </div>
-            @enderror
-
-            <br><br>
-
-            <div style="display:flex; gap:10px;">
+            <div class="modal-actions">
                 @if($openCreate)
                 <button class="btn btn-one" wire:click="store">
                     Crear
                 </button>
                 @else
-                <button class="btn btn-one" wire:click="update">
+                <button class="btn btn-two" wire:click="update">
                     Guardar cambios
                 </button>
                 @endif
 
-                <button class="btn btn-two" wire:click="cancelar">
+                <button class="btn btn-three" wire:click="cancelar">
                     Cancelar
                 </button>
             </div>
-
         </div>
     </div>
     @endif
-
 </div>
