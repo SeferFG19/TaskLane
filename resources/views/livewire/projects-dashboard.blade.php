@@ -103,6 +103,23 @@
             <div class="error">{{ $message }}</div>
             @enderror
 
+            <label class="modal-label">Empleados del proyecto</label>
+            <div class="tags-select">
+                @foreach($usuariosDisponibles as $usuario)
+                <label class="tag-checkbox">
+                    <input type="checkbox"
+                        value="{{ $usuario->id }}"
+                        wire:model="form.employee_ids">
+                    <span class="tag-checkbox-pill" style="background-color:#6b498d;">
+                        {{ $usuario->name }}
+                    </span>
+                </label>
+                @endforeach
+            </div>
+            @error('form.employee_ids')
+            <div class="error">{{ $message }}</div>
+            @enderror
+
             <div class="modal-actions">
                 @if($openCreate)
                 <button class="btn btn-one" wire:click="store">

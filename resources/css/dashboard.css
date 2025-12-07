@@ -101,23 +101,13 @@
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
     border: 1px solid #e5e7eb;
     font-size: 0.8rem;
-    cursor: grab;
-}
-
-.task-card:active {
-    cursor: grabbing;
-}
-
-.task-card-dragging {
-    opacity: 0.85;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
 }
 
 .task-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 28px;
     margin-bottom: 4px;
 }
 

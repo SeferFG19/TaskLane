@@ -26,9 +26,7 @@
 
             <div class="board-column-body">
                 @forelse($tlist->cards as $card)
-                <article class="task-card"
-                    draggable="true"
-                    data-card-id="{{ $card->id }}">
+                <article class="task-card">
                     <div class="task-card-top">
                         <h3 class="task-title">{{ $card->title }}</h3>
 

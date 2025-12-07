@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Forms\FormProject;
 use App\Models\Project;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -50,10 +51,13 @@ class ProjectsDashboard extends Component
         $projects = $query->with(['users', 'boards', 'createdBy'])->paginate(12);
         $adminRoleId = Role::where('name', 'Admin')->value('id');
 
+        $usuariosDisponibles = User::where('is_admin', false)->orderBy('name')->get();
+
         return view('livewire.projects-dashboard', [
             'projects' => $projects,
             'currentUser' => $user,
             'adminRoleId' => $adminRoleId,
+            'usuariosDisponibles' => $usuariosDisponibles,
         ]);
     }
 
@@ -102,6 +106,22 @@ class ProjectsDashboard extends Component
             ['name' => 'Completado', 'color' => '#2ecc71'],
         ]);
 
+        $board->tags()->createMany([
+            ['name' => 'Hot Fix',   'color' => '#e74c3c'],
+            ['name' => 'FrontEnd',  'color' => '#3498db'],
+            ['name' => 'BackEnd',   'color' => '#ff7e00'],
+            ['name' => 'Debug',       'color' => '#88d621ff'],
+            ['name' => 'Excelencia',    'color' => '#8e44ad'],
+        ]);
+
+        $empleadoRole = Role::where('name', 'Empleado')->first();
+        if ($empleadoRole && !empty($this->form->employee_ids)) {
+            $project->users()->attach(
+                $this->form->employee_ids,
+                ['role_id' => $empleadoRole->id]
+            );
+        }
+
         $this->cancelar();
 
         $this->dispatch('evtProyectoActualizado');
@@ -114,16 +134,34 @@ class ProjectsDashboard extends Component
         $this->openCreate = false;
         $this->openUpdate = true;
         $this->editandoProject = $project;
-
         $this->form->modoEditar($project);
+        $empleadoRoleId = Role::where('name', 'Empleado')->value('id');
+        $this->form->employee_ids = $project->users()->wherePivot('role_id', $empleadoRoleId)->pluck('users.id')->toArray();
     }
 
     public function update(): void
     {
         $this->autorizarAdminProject($this->editandoProject);
         $this->form->formUpdate();
-        $this->cancelar();
 
+        $empleadoRole = Role::where('name', 'Empleado')->first();
+
+        if ($empleadoRole) {
+            $project = $this->editandoProject;
+            $currentEmpleadoIds = $project->users()->wherePivot('role_id', $empleadoRole->id)->pluck('users.id')->all();
+
+            if (!empty($currentEmpleadoIds)) {
+                $project->users()->detach($currentEmpleadoIds);
+            }
+            $newIds = $this->form->employee_ids ?? [];
+            if (!empty($newIds)) {
+                $project->users()->attach(
+                    $newIds,
+                    ['role_id' => $empleadoRole->id]
+                );
+            }
+        }
+        $this->cancelar();
         $this->dispatch('evtProyectoActualizado');
         $this->dispatch('mensaje', 'Proyecto actualizado correctamente');
     }

@@ -5,6 +5,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========= NAVBAR APP (dashboard + projects) ========= */
+
+.app-navbar {
+    background: #ffffff;
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(to right, #a855f7, #22c55e);
+    background-repeat: no-repeat;
+    background-size: 100% 3px;
+    background-position: bottom left;
+}
+
+.app-navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    font-family: "roboto mono", monospace;
+}
+
+.app-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-logo-text {
+    font-size: 0.95rem;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.app-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-nav-link {
+    font-size: 0.85rem;
+    color: #4b5563;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.app-nav-link-active,
+.app-nav-link:hover {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .app-navbar-inner {
+        padding: 8px 12px;
+    }
+
+    .app-logo-text {
+        font-size: 0.85rem;
+    }
+}
+
+
 [x-cloak] {
     display: none;
 }

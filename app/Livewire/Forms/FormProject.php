@@ -17,18 +17,21 @@ class FormProject extends Form
     #[Validate(['required', 'string', 'min:5', 'max:500'])]
     public string $description = '';
 
+    #[Validate(['array'])]
+    public array $employee_ids = [];
+
     public function modoCrear(): void
     {
         $this->project = null;
-        $this->reset(['name', 'description']);
+        $this->reset(['name', 'description', 'employee_ids']);
         $this->resetValidation();
     }
 
     public function modoEditar(Project $project): void
     {
-        $this->project      = $project;
-        $this->name         = $project->name;
-        $this->description  = $project->description;
+        $this->project = $project;
+        $this->name = $project->name;
+        $this->description = $project->description;
         $this->resetValidation();
     }
 
@@ -37,38 +40,25 @@ class FormProject extends Form
         $id = $this->project?->id ?? 'NULL';
 
         return [
-            'name'        => ['required', 'string', 'min:3', 'max:150', "unique:projects,name,{$id}"],
-            'description' => ['required', 'string', 'min:5', 'max:500'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'name.required'        => 'El nombre es obligatorio.',
-            'name.min'             => 'El nombre debe tener al menos 3 caracteres.',
-            'name.max'             => 'El nombre no puede superar los 150 caracteres.',
-            'name.unique'          => 'Ya existe un proyecto con ese nombre.',
-
-            'description.required' => 'La descripción es obligatoria.',
-            'description.min'      => 'La descripción debe tener al menos 5 caracteres.',
-            'description.max'      => 'La descripción no puede superar los 500 caracteres.',
+            'name'          => ['required', 'string', 'min:3', 'max:150', "unique:projects,name,{$id}"],
+            'description'   => ['required', 'string', 'min:5', 'max:500'],
+            'employee_ids'  => ['array'],
+            'employee_ids.*'=> ['integer', 'exists:users,id'],
         ];
     }
 
     public function formStore(): Project
     {
         $datos = $this->validate();
-
+        unset($datos['employee_ids']);
         $datos['created_by'] = Auth::id();
-
         return Project::create($datos);
     }
 
     public function formUpdate(): void
     {
         $datos = $this->validate();
-
+        unset($datos['employee_ids']);
         $this->project->update($datos);
     }
 
