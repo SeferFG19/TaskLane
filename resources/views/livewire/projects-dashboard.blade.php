@@ -8,9 +8,13 @@
         </div>
 
         <div class="projects-header-actions">
-            <input type="text" class="projects-search" placeholder="Buscar proyecto..." wire:model.live="texto">
+            <input type="text"
+                class="projects-search"
+                placeholder="Buscar proyecto..."
+                wire:model.live="texto">
+
             @if ($currentUser->is_admin)
-            <button class="btn btn-one" wire:click="abrirCrearProyecto">
+            <button class="btn btn-one" wire:click="showOpenCreate">
                 + Crear proyecto
             </button>
             @endif
@@ -21,9 +25,8 @@
         @forelse($projects as $p)
         @php
         $pivotUser = $p->users->firstWhere('id', $currentUser->id);
-        $isProjectAdmin = $currentUser->is_admin
-        || $p->created_by === $currentUser->id
-        || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
+        $isProjectAdmin = $currentUser->is_admin || $p->created_by === $currentUser->id || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
+
         $board = $p->boards->first();
         @endphp
 
@@ -44,6 +47,7 @@
                         {{ optional($p->createdBy)->name ?? 'Desconocido' }}
                     </span>
                 </div>
+
                 <div class="project-card-buttons">
                     @if ($board)
                     <a href="{{ route('boards.show', $board->id) }}"
@@ -83,12 +87,21 @@
             <h2 class="modal-title">
                 {{ $openCreate ? 'Crear proyecto' : 'Editar proyecto' }}
             </h2>
+
             <label class="modal-label">Nombre</label>
-            <input type="text" class="modal-input" wire:model="form.name">
+            <input type="text"
+                class="modal-input"
+                wire:model="form.name">
+            @error('form.name')
+            <div class="error">{{ $message }}</div>
+            @enderror
 
             <label class="modal-label">Descripción</label>
             <textarea class="modal-textarea"
                 wire:model="form.description"></textarea>
+            @error('form.description')
+            <div class="error">{{ $message }}</div>
+            @enderror
 
             <div class="modal-actions">
                 @if($openCreate)
@@ -108,4 +121,5 @@
         </div>
     </div>
     @endif
+
 </div>

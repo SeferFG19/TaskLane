@@ -43,8 +43,7 @@ class ProjectsDashboard extends Component
         }
 
         $query->where(function ($q) {
-            $q->where('name', 'like', "%{$this->texto}%")
-                ->orWhere('description', 'like', "%{$this->texto}%");
+            $q->where('name', 'like', "%{$this->texto}%")->orWhere('description', 'like', "%{$this->texto}%");
         })
             ->orderBy($this->campo, $this->orden);
 
@@ -70,7 +69,7 @@ class ProjectsDashboard extends Component
     }
 
     // abre el modal de crear
-    public function abrirCrearProyecto(): void
+    public function showOpenCreate(): void
     {
         $this->autorizarAdminGlobal();
         $this->openUpdate = false;

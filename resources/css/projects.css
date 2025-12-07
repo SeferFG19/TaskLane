@@ -233,17 +233,22 @@
 
 /* modal solo para projects */
 
-.projects-modal-backdrop {
+.modal-backdrop {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(15, 23, 42, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 40;
+    z-index: 9999;
 }
 
-.projects-modal {
+.modal {
     background: #ffffff;
     border-radius: 4px;
     padding: 28px 26px;
@@ -251,20 +256,20 @@
     max-width: 650px;
     box-sizing: border-box;
     box-shadow: 0 25px 50px rgba(15, 23, 42, 0.35);
-    animation: projectsModalFade .2s ease-out;
+    animation: modalFade .2s ease-out;
 }
 
-@keyframes projectsModalFade {
+@keyframes modalFade {
     from { opacity: 0; transform: scale(.96); }
     to   { opacity: 1; transform: scale(1); }
 }
 
-.projects-modal-title {
+.modal-title {
     font-size: 1.45rem;
     margin-bottom: 18px;
 }
 
-.projects-modal-label {
+.modal-label {
     display: block;
     margin-top: 8px;
     margin-bottom: 4px;
@@ -272,26 +277,32 @@
     color: #4b5563;
 }
 
-.projects-modal-input,
-.projects-modal-textarea {
+.modal-input,
+.modal-textarea {
     width: 100%;
+    font-size: 1rem;
+    padding: 10px 12px;
     border-radius: 4px;
     border: 1px solid #d1d5db;
     box-sizing: border-box;
-    font-size: 1rem;
-    padding: 10px 12px;
 }
 
-.projects-modal-textarea {
+.modal-textarea {
     min-height: 90px;
     resize: vertical;
 }
 
-.projects-modal-actions {
+.modal-actions {
     margin-top: 16px;
     display: flex;
     gap: 8px;
     justify-content: flex-end;
+}
+
+.error {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #c72020;
 }
 
 /* RESPONSIVE */
