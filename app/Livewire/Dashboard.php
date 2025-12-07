@@ -52,15 +52,16 @@ class Dashboard extends Component
         $empleadoRoleId = Role::where('name', 'Empleado')->value('id');
 
         // empleados a los que se les puede asignar tareas
-        $empleados = $this->project
-            ->users()
-            ->wherePivot('role_id', $empleadoRoleId)
-            ->get();
+        $empleados = $this->project->users()->wherePivot('role_id', $empleadoRoleId)->get();
+
+        // tags disponibles para el modal
+        $availableTags = $board->tags ?? collect();
 
         return view('livewire.dashboard', [
             'board' => $board,
             'role' => $role,
             'empleados' => $empleados,
+            'availableTags' => $availableTags,
         ]);
     }
 

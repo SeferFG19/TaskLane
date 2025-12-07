@@ -1,192 +1,237 @@
-<div class="dashboard">
+<div class="board-page">
 
-    <div class="board-container">
-        @foreach($board->tlists as $tlist)
-        <div class="board-list">
-            <h3>{{ $tlist->name }}</h3>
+    <header class="board-header">
+        <div class="board-header-inner">
+            <h1 class="board-title">{{ $project->name ?? '' }}</h1>
             @if($role === 'Admin')
-            <button class="btn btn-one btn-sm"
-                wire:click="openCreateCard({{ $tlist->id }})">
-                + Añadir tarea
-            </button>
-            @endif
-
-            <br><br>
-            @foreach($tlist->cards as $card)
-            <div class="card">
-                <strong>{{ $card->title }}</strong><br>
-                <small>{{ $card->description }}</small><br>
-                @if($card->assignedUser)
-                <small>Asignada a: {{ $card->assignedUser->name }}</small>
-                @endif
-
-                @if($card->tags->count())
-                <div style="margin-top: 6px;">
-                    @foreach($card->tags as $tag)
-                    <span style="display:inline-block; padding:2px 6px; border-radius:4px; font-size:0.7rem; background-color: {{ $tag->color }}; color:#fff; margin-right:4px;">
-                        {{ $tag->name }}
-                    </span>
-                    @endforeach
-                </div>
-                @endif
-
-                <br><br>
-
-                @if($role === 'Admin')
-                <button class="btn btn-one btn-sm"
-                    wire:click="editCard({{ $card->id }})">
-                    Editar
-                </button>
-
-                <button class="btn btn-three btn-sm"
-                    wire:click="confirmarDeleteCard({{ $card->id }})">
-                    Borrar
-                </button>
-                @endif
-
-                @if($role !== 'Supervisor')
-                <button class="btn btn-two btn-sm"
-                    wire:click="abrirComentarios({{ $card->id }})">
-                    Comentarios ({{ $card->comments->count() }})
-                </button>
-                @endif
-
-                @foreach($board->tlists as $otratlist)
-                @if($otratlist->id !== $tlist->id)
-                <button class="btn btn-sm"
-                    wire:click="moverCard({{ $card->id }}, {{ $otratlist->id }})">
-                    → {{ $otratlist->name }}
-                </button>
-                @endif
-                @endforeach
-
+            <div class="board-header-admin">
+                <span class="badge-admin">Admin de proyecto</span>
             </div>
-            @endforeach
-
+            @endif
         </div>
-        @endforeach
+    </header>
 
-    </div>
+    <section class="board-container">
+        @foreach($board->tlists as $tlist)
+        <section class="board-column" data-list-id="{{ $tlist->id }}">
+            <div class="board-column-header">
+                <span class="board-column-title">{{ $tlist->name }}</span>
+                @if($role === 'Admin')
+                <button class="board-add-btn"
+                    wire:click="openCreateCard({{ $tlist->id }})">
+                    + Tarea
+                </button>
+                @endif
+            </div>
+
+            <div class="board-column-body">
+                @forelse($tlist->cards as $card)
+                <article class="task-card"
+                    draggable="true"
+                    data-card-id="{{ $card->id }}">
+                    <div class="task-card-top">
+                        <h3 class="task-title">{{ $card->title }}</h3>
+
+                        @if($card->assignedUser)
+                        <span class="task-assignee">
+                            {{ $card->assignedUser->name }}
+                        </span>
+                        @endif
+                    </div>
+                    @if($card->tags->count())
+                    <div class="task-tags">
+                        @foreach($card->tags as $tag)
+                        <span class="task-tag"
+                            style="background-color: {{ $tag->color }};">
+                            {{ $tag->name }}
+                        </span>
+                        @endforeach
+                    </div>
+                    @endif
+
+                    <p class="task-desc">
+                        {{ $card->description }}
+                    </p>
+
+                    <div class="task-card-actions">
+                        @if($role === 'Admin')
+                        <button class="task-btn one"
+                            wire:click="editCard({{ $card->id }})">
+                            Editar
+                        </button>
+                        <button class="task-btn two"
+                            wire:click="confirmarDeleteCard({{ $card->id }})">
+                            Borrar
+                        </button>
+                        @endif
+
+                        @if($role !== 'Supervisor')
+                        <button class="task-btn comments"
+                            wire:click="abrirComentarios({{ $card->id }})">
+                            Comentarios ({{ $card->comments->count() }})
+                        </button>
+                        @endif
+                    </div>
+
+                    <div class="task-move-row">
+                        @foreach($board->tlists as $otratlist)
+                        @if($otratlist->id !== $tlist->id)
+                        <button class="task-move-pill"
+                            wire:click="moverCard({{ $card->id }}, {{ $otratlist->id }})">
+                            {{ $otratlist->name }}
+                        </button>
+                        @endif
+                        @endforeach
+                    </div>
+                </article>
+                @empty
+                <p class="task-empty">Sin tareas</p>
+                @endforelse
+            </div>
+        </section>
+        @endforeach
+    </section>
 
     @if($showOpenCreateCard)
-    <div class="modal-background">
+    <div class="modal-backdrop">
         <div class="modal">
-            <h2>Crear tarea</h2>
-            <label>Título</label>
-            <input type="text" wire:model="formCard.title">
-            @error('formCard.title')
-            <div style="color:red;font-size:0.8rem">{{ $message }}</div>
-            @enderror
-            <br><br>
-
-            <label>Descripción</label>
-            <textarea wire:model="formCard.description"></textarea>
-            @error('formCard.description')
-            <div style="color:red;font-size:0.8rem">{{ $message }}</div>
-            @enderror
-            <br><br>
+            <h2 class="modal-title">Crear tarea</h2>
+            <label class="modal-label">Título</label>
+            <input class="modal-input"
+                type="text"
+                wire:model="formCard.title">
+            <label class="modal-label">Descripción</label>
+            <textarea class="modal-textarea"
+                wire:model="formCard.description"></textarea>
 
             @if($role === 'Admin')
-            <label>Asignar a:</label>
-            <select wire:model="formCard.assigned_to">
+            <label class="modal-label">Asignar a</label>
+            <select class="modal-input"
+                wire:model="formCard.assigned_to">
                 <option value="">Sin asignar</option>
                 @foreach($empleados as $emp)
                 <option value="{{ $emp->id }}">{{ $emp->name }}</option>
                 @endforeach
             </select>
-            <br><br>
-            @endif
 
-            @if($board->tags->count())
-            <label>Etiquetas:</label>
-            <div class="tags-picker">
-                @foreach($board->tags as $tag)
-                <label class="tag-pill">
-                    <input type="checkbox" wire:model="formCard.tags" value="{{ $tag->id }}">
-                    <span class="tag-color" style="background-color: {{ $tag->color }}"></span>
-                    <span class="tag-name">{{ $tag->name }}</span>
+            <label class="modal-label">Tags</label>
+            <div class="tags-select">
+                @foreach($availableTags as $tag)
+                <label class="tag-checkbox">
+                    <input type="checkbox"
+                        value="{{ $tag->id }}"
+                        wire:model="formCard.tags">
+                    <span class="tag-checkbox-pill"
+                        style="background-color: {{ $tag->color }};">
+                        {{ $tag->name }}
+                    </span>
                 </label>
                 @endforeach
             </div>
-            <br>
             @endif
 
-            <button class="btn btn-one" wire:click="storeCard">Crear</button>
-            <button class="btn btn-two" wire:click="cancelTask">Cancelar</button>
+            <div class="modal-actions">
+                <button class="btn btn-primary" wire:click="storeCard">
+                    Crear
+                </button>
+                <button class="btn btn-three" wire:click="cancelTask">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
     @endif
 
     @if($showOpenUpdateCard)
-    <div class="modal-background">
+    <div class="modal-backdrop">
         <div class="modal">
-            <h2>Editar tarea</h2>
-            <label>Título</label>
-            <input type="text" wire:model="formCard.title">
-            <br><br>
-            <label>Descripción</label>
-            <textarea wire:model="formCard.description"></textarea>
-            <br><br>
+            <h2 class="modal-title">Editar tarea</h2>
+            <label class="modal-label">Título</label>
+            <input class="modal-input"
+                type="text"
+                wire:model="formCard.title">
+            <label class="modal-label">Descripción</label>
+            <textarea class="modal-textarea"
+                wire:model="formCard.description"></textarea>
 
             @if($role === 'Admin')
-            <label>Asignar a</label>
-            <select wire:model="formCard.assigned_to">
+            <label class="modal-label">Asignar a</label>
+            <select class="modal-input"
+                wire:model="formCard.assigned_to">
                 <option value="">Sin asignar</option>
                 @foreach($empleados as $emp)
                 <option value="{{ $emp->id }}">{{ $emp->name }}</option>
                 @endforeach
             </select>
-            <br><br>
-            @endif
 
-            @if($board->tags->count())
-            <label>Etiquetas:</label>
-            <div class="tags-picker">
-                @foreach($board->tags as $tag)
-                <label class="tag-pill">
-                    <input type="checkbox" wire:model="formCard.tags" value="{{ $tag->id }}">
-                    <span class="tag-color" style="background-color: {{ $tag->color }}"></span>
-                    <span class="tag-name">{{ $tag->name }}</span>
+            <label class="modal-label">Tags</label>
+            <div class="tags-select">
+                @foreach($availableTags as $tag)
+                <label class="tag-checkbox">
+                    <input type="checkbox"
+                        value="{{ $tag->id }}"
+                        wire:model="formCard.tags">
+                    <span class="tag-checkbox-pill"
+                        style="background-color: {{ $tag->color }};">
+                        {{ $tag->name }}
+                    </span>
                 </label>
                 @endforeach
             </div>
-            <br>
             @endif
 
-            <button class="btn btn-one" wire:click="updateCard">Guardar</button>
-            <button class="btn btn-two" wire:click="cancelTask">Cancelar</button>
+            <div class="modal-actions">
+                <button class="btn btn-primary" wire:click="updateCard">
+                    Guardar
+                </button>
+                <button class="btn btn-three" wire:click="cancelTask">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
     @endif
 
     @if($cardComentarios)
-    <div class="modal-background">
+    <div class="modal-backdrop">
         <div class="modal">
-            <h2>Comentarios</h2>
-            <div style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+            <h2 class="modal-title">Comentarios</h2>
+            <div class="comments-list">
                 @foreach($cardComentarios->comments as $com)
-                <div style="margin-bottom: 12px;">
-                    <strong>{{ $com->user->name }}</strong><br>
-                    <span>{{ $com->comment }}</span>
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-user">{{ $com->user->name }}</span>
+                        <span class="comment-date">
+                            {{ $com->created_at->format('d/m/Y H:i') }}
+                        </span>
+                    </div>
+                    <p class="comment-text">{{ $com->comment }}</p>
                 </div>
                 @endforeach
             </div>
 
             @if($role !== 'Supervisor')
-            <label>Nuevo comentario</label>
-            <textarea wire:model="nuevoComentario"></textarea>
-
-            <br><br>
-
-            <button class="btn btn-one" wire:click="agregarComentario">
-                Añadir comentario
-            </button>
+            <label class="modal-label">Nuevo comentario</label>
+            <textarea class="modal-textarea"
+                wire:model="nuevoComentario"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-primary"
+                    wire:click="agregarComentario">
+                    Añadir
+                </button>
+                <button class="btn btn-three"
+                    wire:click="cerrarComentarios">
+                    Cerrar
+                </button>
+            </div>
+            @else
+            <div class="modal-actions">
+                <button class="btn btn-secondary"
+                    wire:click="cerrarComentarios">
+                    Cerrar
+                </button>
+            </div>
             @endif
-
-            <button class="btn btn-two" wire:click="cerrarComentarios">
-                Cerrar
-            </button>
-
         </div>
     </div>
     @endif
