@@ -307,7 +307,7 @@
 
 /* RESPONSIVE */
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
     .projects-header {
         align-items: flex-start;
     }
@@ -322,7 +322,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 550px) {
     .project-card-buttons {
         flex-direction: column;
     }

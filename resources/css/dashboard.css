@@ -406,3 +406,14 @@
         max-width: 260px;
     }
 }
+
+@media (max-width: 550px) {
+    .board-page {
+        padding: 16px 16px 24px;
+    }
+
+    .board-column {
+        flex: 0 0 260px;
+        max-width: 260px;
+    }
+}
