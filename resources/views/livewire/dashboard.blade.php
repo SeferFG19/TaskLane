@@ -92,17 +92,19 @@
         <div class="modal" aria-modal="true" aria-labelledby="modal-title-create" aria-describedby="modal-desc-create">
             <h2 class="modal-title">Crear tarea</h2>
             <label class="modal-label">Título</label>
-            <input class="modal-input"
-                type="text"
-                wire:model="formCard.title">
+            <input class="modal-input" type="text" wire:model="formCard.title">
+            @error('formCard.title')
+            <div class="error">{{ $message }}</div>
+            @enderror
             <label class="modal-label">Descripción</label>
-            <textarea class="modal-textarea"
-                wire:model="formCard.description"></textarea>
+            <textarea class="modal-textarea" wire:model="formCard.description"></textarea>
+            @error('formCard.description')
+            <div class="error">{{ $message }}</div>
+            @enderror
 
             @if($role === 'Admin')
             <label class="modal-label">Asignar a</label>
-            <select class="modal-input"
-                wire:model="formCard.assigned_to">
+            <select class="modal-input" wire:model="formCard.assigned_to">
                 <option value="">Sin asignar</option>
                 @foreach($empleados as $emp)
                 <option value="{{ $emp->id }}">{{ $emp->name }}</option>
@@ -113,11 +115,8 @@
             <div class="tags-select">
                 @foreach($availableTags as $tag)
                 <label class="tag-checkbox">
-                    <input type="checkbox"
-                        value="{{ $tag->id }}"
-                        wire:model="formCard.tags">
-                    <span class="tag-checkbox-pill"
-                        style="background-color: {{ $tag->color }};">
+                    <input type="checkbox" value="{{ $tag->id }}" wire:model="formCard.tags">
+                    <span class="tag-checkbox-pill" style="background-color: {{ $tag->color }};">
                         {{ $tag->name }}
                     </span>
                 </label>
@@ -142,17 +141,19 @@
         <div class="modal" aria-modal="true" aria-labelledby="modal-title-create" aria-describedby="modal-desc-create">
             <h2 class="modal-title">Editar tarea</h2>
             <label class="modal-label">Título</label>
-            <input class="modal-input"
-                type="text"
-                wire:model="formCard.title">
+            <input class="modal-input" type="text" wire:model="formCard.title">
+            @error('formCard.title')
+            <div class="error">{{ $message }}</div>
+            @enderror
             <label class="modal-label">Descripción</label>
-            <textarea class="modal-textarea"
-                wire:model="formCard.description"></textarea>
+            <textarea class="modal-textarea" wire:model="formCard.description"></textarea>
+            @error('formCard.description')
+            <div class="error">{{ $message }}</div>
+            @enderror
 
             @if($role === 'Admin')
             <label class="modal-label">Asignar a</label>
-            <select class="modal-input"
-                wire:model="formCard.assigned_to">
+            <select class="modal-input" wire:model="formCard.assigned_to">
                 <option value="">Sin asignar</option>
                 @foreach($empleados as $emp)
                 <option value="{{ $emp->id }}">{{ $emp->name }}</option>
@@ -163,11 +164,8 @@
             <div class="tags-select">
                 @foreach($availableTags as $tag)
                 <label class="tag-checkbox">
-                    <input type="checkbox"
-                        value="{{ $tag->id }}"
-                        wire:model="formCard.tags">
-                    <span class="tag-checkbox-pill"
-                        style="background-color: {{ $tag->color }};">
+                    <input type="checkbox" value="{{ $tag->id }}" wire:model="formCard.tags">
+                    <span class="tag-checkbox-pill" style="background-color: {{ $tag->color }};">
                         {{ $tag->name }}
                     </span>
                 </label>
@@ -207,22 +205,18 @@
 
             @if($role !== 'Supervisor')
             <label class="modal-label">Nuevo comentario</label>
-            <textarea class="modal-textarea"
-                wire:model="nuevoComentario"></textarea>
+            <textarea class="modal-textarea" wire:model="nuevoComentario"></textarea>
             <div class="modal-actions">
-                <button class="btn btn-primary"
-                    wire:click="agregarComentario">
+                <button class="btn btn-primary" wire:click="agregarComentario">
                     Añadir
                 </button>
-                <button class="btn btn-three"
-                    wire:click="cerrarComentarios">
+                <button class="btn btn-three" wire:click="cerrarComentarios">
                     Cerrar
                 </button>
             </div>
             @else
             <div class="modal-actions">
-                <button class="btn btn-secondary"
-                    wire:click="cerrarComentarios">
+                <button class="btn btn-secondary" wire:click="cerrarComentarios">
                     Cerrar
                 </button>
             </div>

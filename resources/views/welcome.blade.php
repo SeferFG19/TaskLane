@@ -6,8 +6,8 @@
             </div>
             <ul class="nav-buttons">
                 <li><a href="#features" class="btn-nav">Características</a></li>
-                <li><a href="#about" class="btn-nav">Sobre Nosotros</a></li>
-                <li><a href="#contact" class="btn-nav">Contacto</a></li>
+                <li><a href="#comienza" class="btn-nav">Comienza</a></li>
+                <li><a href="#perfiles" class="btn-nav">Perfiles</a></li>
             </ul>
             <ul class="nav-login">
                 <li><a href="{{ route('login') }}" class="btn-login">Iniciar Sesión</a></li>
@@ -18,7 +18,7 @@
         <div class="hero">
             <div class="hero-text">
                 <h1>TASKLANE</h1>
-                <p>Gestiona, organiza y desarrolla tus proyectos con esta herramienta <br> hecha por desarrolladores para desarrolladores</p>
+                <p>Gestiona, organiza y desarrolla tus proyectos con esta herramienta hecha por desarrolladores para desarrolladores</p>
                 <a href="{{ route('register') }}" class="btn">Comenzar ahora</a>
             </div>
             <div class="hero-image-frame">
@@ -27,8 +27,8 @@
         </div>
     </header>
 
-    <section id="caracteristicas" aria-labelledby="title-features">
-        <h2 class="titles" id="title-features">Características</h2>
+    <section id="caracteristicas" aria-labelledby="features">
+        <h2 class="titles" id="features">Características</h2>
 
         <div class="sections-container">
 
@@ -50,7 +50,7 @@
         </div>
     </section>
 
-    <section id="comienza">
+    <section id="comienza" aria-labelledby="comienza">
         <h2 class="titles">Comienza</h2>
         <div class="sections-container">
             <div class="section">
@@ -72,7 +72,7 @@
         </div>
     </section>
 
-    <section id="perfiles">
+    <section id="perfiles" aria-labelledby="perfiles">
         <h2 class="titles">Perfiles</h2>
         <div class="sections-container">
             <div class="section">

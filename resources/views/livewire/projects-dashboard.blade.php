@@ -83,16 +83,13 @@
             </h2>
 
             <label class="modal-label">Nombre</label>
-            <input type="text"
-                class="modal-input"
-                wire:model="form.name">
+            <input type="text" class="modal-input" wire:model="form.name">
             @error('form.name')
             <div class="error">{{ $message }}</div>
             @enderror
 
             <label class="modal-label">Descripción</label>
-            <textarea class="modal-textarea"
-                wire:model="form.description"></textarea>
+            <textarea class="modal-textarea" wire:model="form.description"></textarea>
             @error('form.description')
             <div class="error">{{ $message }}</div>
             @enderror
@@ -101,9 +98,7 @@
             <div class="tags-select">
                 @foreach($usuariosDisponibles as $usuario)
                 <label class="tag-checkbox">
-                    <input type="checkbox"
-                        value="{{ $usuario->id }}"
-                        wire:model="form.employee_ids">
+                    <input type="checkbox" value="{{ $usuario->id }}" wire:model="form.employee_ids">
                     <span class="tag-checkbox-pill" style="background-color:#6b498d;">
                         {{ $usuario->name }}
                     </span>
