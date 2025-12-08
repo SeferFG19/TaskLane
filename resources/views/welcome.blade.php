@@ -1,7 +1,6 @@
 <x-guest-layout>
-
     <header>
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Menú Principal">
             <div class="logo">
                 <img src="{{ asset('images/logoTasklane.svg') }}" alt="Logo de la app">
             </div>
@@ -23,13 +22,13 @@
                 <a href="{{ route('register') }}" class="btn">Comenzar ahora</a>
             </div>
             <div class="hero-image-frame">
-                <img src="{{ asset('images/dashboard.png') }}" alt="Vista del dashboard" class="hero-image">
+                <img src="{{ asset('images/dashboard.png') }}" alt="Vista previa del dashboard" class="hero-image">
             </div>
         </div>
     </header>
 
-    <section id="caracteristicas">
-        <h2 class="titles">Características</h2>
+    <section id="caracteristicas" aria-labelledby="title-features">
+        <h2 class="titles" id="title-features">Características</h2>
 
         <div class="sections-container">
 

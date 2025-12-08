@@ -5,20 +5,19 @@
             <h1 class="board-title">{{ $project->name ?? '' }}</h1>
             @if($role === 'Admin')
             <div class="board-header-admin">
-                <span class="badge-admin">Admin de proyecto</span>
+                <span class="badge-admin" aria-label="Rol: Administrador del proyecto">Admin de proyecto</span>
             </div>
             @endif
         </div>
     </header>
 
-    <section class="board-container">
+    <section class="board-container" aria-label="Columnas del tablero">
         @foreach($board->tlists as $tlist)
-        <section class="board-column" data-list-id="{{ $tlist->id }}">
+        <section class="board-column" data-list-id="{{ $tlist->id }}" aria-labelledby="list-title-{{ $tlist->id }}">
             <div class="board-column-header">
                 <span class="board-column-title">{{ $tlist->name }}</span>
                 @if($role === 'Admin')
-                <button class="board-add-btn"
-                    wire:click="openCreateCard({{ $tlist->id }})">
+                <button class="board-add-btn" aria-label="Crear nueva tarea en la lista {{ $tlist->name }}" wire:click="openCreateCard({{ $tlist->id }})">
                     + Tarea
                 </button>
                 @endif
@@ -26,7 +25,7 @@
 
             <div class="board-column-body">
                 @forelse($tlist->cards as $card)
-                <article class="task-card">
+                <article class="task-card" aria-label="Tarea: {{ $card->title }}">
                     <div class="task-card-top">
                         <h3 class="task-title">{{ $card->title }}</h3>
 
@@ -53,8 +52,7 @@
 
                     <div class="task-card-actions">
                         @if($role === 'Admin')
-                        <button class="task-btn one"
-                            wire:click="editCard({{ $card->id }})">
+                        <button class="task-btn one" aria-label="Editar tarea {{ $card->title }}" wire:click="editCard({{ $card->id }})">
                             Editar
                         </button>
                         <button class="task-btn two"
@@ -74,8 +72,7 @@
                     <div class="task-move-row">
                         @foreach($board->tlists as $otratlist)
                         @if($otratlist->id !== $tlist->id)
-                        <button class="task-move-pill"
-                            wire:click="moverCard({{ $card->id }}, {{ $otratlist->id }})">
+                        <button class="task-move-pill" aria-label="Mover tarea a la lista {{ $otratlist->name }}" wire:click="moverCard({{ $card->id }}, {{ $otratlist->id }})">
                             {{ $otratlist->name }}
                         </button>
                         @endif
@@ -92,7 +89,7 @@
 
     @if($showOpenCreateCard)
     <div class="modal-backdrop">
-        <div class="modal">
+        <div class="modal" aria-modal="true" aria-labelledby="modal-title-create" aria-describedby="modal-desc-create">
             <h2 class="modal-title">Crear tarea</h2>
             <label class="modal-label">Título</label>
             <input class="modal-input"
@@ -142,7 +139,7 @@
 
     @if($showOpenUpdateCard)
     <div class="modal-backdrop">
-        <div class="modal">
+        <div class="modal" aria-modal="true" aria-labelledby="modal-title-create" aria-describedby="modal-desc-create">
             <h2 class="modal-title">Editar tarea</h2>
             <label class="modal-label">Título</label>
             <input class="modal-input"
@@ -192,7 +189,7 @@
 
     @if($cardComentarios)
     <div class="modal-backdrop">
-        <div class="modal">
+        <div class="modal" aria-modal="true" aria-labelledby="modal-title-create" aria-describedby="modal-desc-create">
             <h2 class="modal-title">Comentarios</h2>
             <div class="comments-list">
                 @foreach($cardComentarios->comments as $com)

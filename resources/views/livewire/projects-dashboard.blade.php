@@ -8,10 +8,7 @@
         </div>
 
         <div class="projects-header-actions">
-            <input type="text"
-                class="projects-search"
-                placeholder="Buscar proyecto..."
-                wire:model.live="texto">
+            <input type="text" class="projects-search" placeholder="Buscar proyecto..." aria-label="Buscar proyecto" wire:model.live="texto">
 
             @if ($currentUser->is_admin)
             <button class="btn btn-one" wire:click="showOpenCreate">
@@ -26,11 +23,10 @@
         @php
         $pivotUser = $p->users->firstWhere('id', $currentUser->id);
         $isProjectAdmin = $currentUser->is_admin || $p->created_by === $currentUser->id || ($pivotUser && $pivotUser->pivot->role_id === $adminRoleId);
-
         $board = $p->boards->first();
         @endphp
 
-        <article class="project-card">
+        <article class="project-card" aria-label="Proyecto: {{ $p->name }}">
             <div class="project-card-header">
                 <h2 class="project-card-title">{{ $p->name }}</h2>
                 <span class="project-card-id">#{{ $p->id }}</span>
@@ -50,15 +46,13 @@
 
                 <div class="project-card-buttons">
                     @if ($board)
-                    <a href="{{ route('boards.show', $board->id) }}"
-                        class="project-btn project-btn-one">
+                    <a href="{{ route('boards.show', $board->id) }}" class="project-btn project-btn-one" aria-label="Abrir tablero del proyecto {{ $p->name }}">
                         Tareas
                     </a>
                     @endif
 
                     @if($isProjectAdmin)
-                    <button class="project-btn project-btn-two"
-                        wire:click="editar({{ $p->id }})">
+                    <button class="project-btn project-btn-two" wire:click="editar({{ $p->id }})" aria-label="Editar tablero del proyecto {{ $p->name }}">
                         Editar
                     </button>
 
@@ -83,8 +77,8 @@
 
     @if($openCreate || $openUpdate)
     <div class="modal-backdrop">
-        <div class="modal">
-            <h2 class="modal-title">
+        <div class="modal" aria-modal="true" aria-labelledby="modal-title-project" aria-describedby="modal-desc-project">
+            <h2 class="modal-title" id="modal-title-project">
                 {{ $openCreate ? 'Crear proyecto' : 'Editar proyecto' }}
             </h2>
 
